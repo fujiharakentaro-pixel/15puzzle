@@ -36,7 +36,6 @@ function shuffleBoard() {
 function checkWin() {
     const win = tiles.slice(0, 15).every((tile, i) => tile === i + 1);
     if (win && moves > 0) {
-        // アラートの後にスコア送信を実行
         setTimeout(() => {
             alert("Clear!");
             uploadScore(moves);
@@ -46,32 +45,46 @@ function checkWin() {
 
 createBoard();
 
-async function uploadScore(moves) {
-    const url = "https://script.google.com/a/macros/adways.net/s/AKfycbxOB6MpQokZPLNVlJgSvHYXrV_1VIxI0UGbk5PCiKR8DccWuJHrn5f6uhct9_E7iYb7qA/exec"
+// 修正：fetchを使わず「隠しフォーム」で送信する関数
+function uploadScore(moves) {
+    const url = "https://script.google.com/a/macros/adways.net/s/AKfycbxOB6MpQokZPLNVlJgSvHYXrV_1VIxI0UGbk5PCiKR8DccWuJHrn5f6uhct9_E7iYb7qA/exec";
     const playerName = prompt("クリアおめでとう！名前を入力してください：") || "Anonymous";
 
-    const formData = new URLSearchParams();
-    formData.append('name', playerName);
-    formData.append('moves', moves);
+    // 1. フォームを作成
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = 'hidden_iframe'; // ページが切り替わらないようにする
 
-    try {
-        console.log("アドウェイズ認証で送信開始...");
-        
-        // mode: "no-cors" を指定
-        await fetch(url, {
-            method: "POST",
-            mode: "no-cors", 
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: formData.toString()
-        });
-        
-        // no-cors の場合はレスポンスが取れないため、そのまま完了通知を出す
-        alert("送信リクエストを完了しました！スプレッドシートを確認してください。");
-        
-    } catch (error) {
-        console.error("詳細エラー:", error);
-        alert("通信エラーが発生しました。");
+    // 2. データをセット
+    const nameField = document.createElement('input');
+    nameField.type = 'hidden';
+    nameField.name = 'name';
+    nameField.value = playerName;
+    form.appendChild(nameField);
+
+    const movesField = document.createElement('input');
+    movesField.type = 'hidden';
+    movesField.name = 'moves';
+    movesField.value = moves;
+    form.appendChild(movesField);
+
+    // 3. ページ遷移を防ぐための見えないiframeを準備
+    let iframe = document.getElementById('hidden_iframe');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hidden_iframe';
+        iframe.name = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
     }
+
+    // 4. 送信実行
+    document.body.appendChild(form);
+    form.submit();
+    
+    alert("アドウェイズ・ランキングに送信しました！スプレッドシートを確認してください。");
+    
+    // 後片付け
+    setTimeout(() => document.body.removeChild(form), 1000);
 }
