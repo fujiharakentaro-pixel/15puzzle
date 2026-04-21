@@ -2,7 +2,6 @@ const boardElement = document.getElementById("game-board");
 let tiles = [...Array(15).keys()].map(i => i + 1).concat([null]);
 let moves = 0;
 
-// ボードの生成
 function createBoard() {
     boardElement.innerHTML = "";
     tiles.forEach((tile, index) => {
@@ -14,7 +13,6 @@ function createBoard() {
     });
 }
 
-// タイルの移動
 function moveTile(index) {
     const emptyIndex = tiles.indexOf(null);
     const row = Math.floor(index / 4);
@@ -32,8 +30,8 @@ function moveTile(index) {
     }
 }
 
-// シャッフル（解ける状態でシャッフルするためにランダム移動を繰り返す）
 function shuffleBoard() {
+    // 確実に解ける状態でシャッフル
     for (let i = 0; i < 200; i++) {
         const emptyIndex = tiles.indexOf(null);
         const neighbors = [emptyIndex-1, emptyIndex+1, emptyIndex-4, emptyIndex+4].filter(n => n >= 0 && n < 16);
@@ -45,7 +43,6 @@ function shuffleBoard() {
     createBoard();
 }
 
-// 勝利判定
 function checkWin() {
     const win = tiles.slice(0, 15).every((tile, i) => tile === i + 1);
     if (win && moves > 0) {
@@ -56,20 +53,25 @@ function checkWin() {
     }
 }
 
-// スコア送信（アドウェイズ認証突破版）
+createBoard();
+
+/**
+ * 修正ポイント：
+ * fetch（裏側での通信）ではなく、window.open（表側でのアクセス）を使うことで
+ * アドウェイズの組織認証（401エラー）を100%回避します。
+ */
 function uploadScore(moves) {
-    // あなたの最新のGAS URLをここに貼ってください
+    // 最新のGAS URL (doGetを実装したもの)
     const url = "https://script.google.com/a/macros/adways.net/s/AKfycbzoga69hmErtkFzPY4wD8JIunepqcWSV4FbVR_nrJbJWCxfbXyEP5GOUH6jyKsJWn-Y9Q/exec";
     
     const playerName = prompt("クリアおめでとう！名前を入力してください：") || "Anonymous";
 
-    // URLにパラメータを付与
+    // URLの末尾にデータを付与する
     const finalUrl = `${url}?name=${encodeURIComponent(playerName)}&moves=${moves}`;
 
-    // 【重要】新しいタブで開くことでアドウェイズの組織認証を通過させる
+    // 新しいタブでGASのURLを直接開く
+    // ブラウザが「アドウェイズ社員本人によるアクセス」と認めるため、認証が通ります
     window.open(finalUrl, '_blank');
     
-    alert("ランキング登録用のタブを開きました。そちらの画面で「記録完了」と出れば成功です。");
+    alert("スコア登録用のタブを開きました。そちらの画面で『記録完了』と出れば成功です！");
 }
-
-createBoard();
