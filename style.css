@@ -1,0 +1,13 @@
+body { font-family: sans-serif; text-align: center; background: #f0f0f0; touch-action: manipulation; }
+#game-board { 
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; 
+    width: 320px; height: 320px; margin: 20px auto; background: #bbb; padding: 5px;
+}
+.tile { 
+    width: 75px; height: 75px; background: #fff; display: flex; 
+    align-items: center; justify-content: center; font-size: 24px; 
+    font-weight: bold; cursor: pointer; border-radius: 4px;
+}
+.empty { background: #bbb; cursor: default; }
+#score { font-size: 20px; margin: 10px; }
+button { padding: 10px 20px; font-size: 16px; border-radius: 5px; border: none; background: #007bff; color: white; }
