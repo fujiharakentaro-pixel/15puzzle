@@ -47,31 +47,31 @@ function checkWin() {
 createBoard();
 
 async function uploadScore(moves) {
-    // ⚠️ アドウェイズ限定URL（/a/macros/adways.net/ を含むもの）
-    const url = "https://script.google.com/a/macros/adways.net/s/AKfycbxUDSQJcqCu9Pq9FQkN7GNZQdN7REYP624coE9hJrP7/dev; 
-    
-    const playerName = prompt("クリア！名前を入力してください：") || "Anonymous";
+    const url = "あなたの最新のGASのURL"; // 必ず最新のものに！
+    const playerName = prompt("クリアおめでとう！名前を入力してください：") || "Anonymous";
 
-    const body = new URLSearchParams({
-        "name": playerName,
-        "moves": moves
-    }).toString();
+    const formData = new URLSearchParams();
+    formData.append('name', playerName);
+    formData.append('moves', moves);
 
     try {
-        // mode: "cors" で送る。ブラウザにアドウェイズのアカウントでログインしていれば
-        // 自動的に認証情報が添えられます。
+        console.log("アドウェイズ認証で送信開始...");
+        
+        // mode: "no-cors" を指定
         await fetch(url, {
             method: "POST",
-            mode: "cors",
+            mode: "no-cors", 
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: body
+            body: formData.toString()
         });
         
-        alert("アドウェイズ・ランキングに登録しました！");
+        // no-cors の場合はレスポンスが取れないため、そのまま完了通知を出す
+        alert("送信リクエストを完了しました！スプレッドシートを確認してください。");
+        
     } catch (error) {
-        console.error("詳細:", error);
-        alert("送信失敗。adways.netにログインしているか確認してください。");
+        console.error("詳細エラー:", error);
+        alert("通信エラーが発生しました。");
     }
 }
