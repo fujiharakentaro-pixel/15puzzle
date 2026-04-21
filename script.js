@@ -47,7 +47,7 @@ function checkWin() {
 createBoard();
 
 async function uploadScore(moves) {
-    const url = "あなたの最新のGASのURL"; // 必ず最新のものに！
+    const url = "https://script.google.com/a/macros/adways.net/s/AKfycbxOB6MpQokZPLNVlJgSvHYXrV_1VIxI0UGbk5PCiKR8DccWuJHrn5f6uhct9_E7iYb7qA/exec"
     const playerName = prompt("クリアおめでとう！名前を入力してください：") || "Anonymous";
 
     const formData = new URLSearchParams();
